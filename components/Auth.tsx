@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { ReactElement, useEffect } from 'react'
 import useVeterinarian from '../hooks/useVeterinarian';
 
-function Auth({ children }: {children?: ReactElement}) {
+function Auth({ children }: {children?: ReactElement | ReactElement[]}) {
   const router = useRouter();
   const {veterinarian, handleAuth, isAuth} = useVeterinarian();
 
