@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChangeEvent, useState } from "react";
 import Alert from "../../components/Alert";
+import CustomHead from "../../components/CustomHead";
 import Wave from "../../components/Wave";
 import { recoveryPassword } from "../../services";
 
@@ -35,6 +36,7 @@ function RecoveryPassword() {
   };
   return (
     <>
+      <CustomHead title="Recuperar Contraseña" description="Recupera tu contraseña para que no pierdas acceso" />
       <div className="container mx-auto p-4 text-center">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-indigo-600 mt-10">
           Veterinary <span className="text-black">App</span>

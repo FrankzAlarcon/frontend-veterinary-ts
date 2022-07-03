@@ -1,7 +1,7 @@
 export interface Task {
   id: number,
   text: string,
-  priority: 'HIGH' | 'MEDIUM' | 'LOW'
+  priority: 'HIGH' | 'MEDIUM' | 'LOW' | ''
 }
 interface ErrorResponse {
   error: string, 
@@ -27,3 +27,5 @@ export interface DeleteTaskResponse {
   error: ErrorResponse | '',
   body: string
 }
+
+export type EditTaskResponse = CreateTaskResponse;

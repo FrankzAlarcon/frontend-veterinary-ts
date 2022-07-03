@@ -1,4 +1,3 @@
-import { GetServerSidePropsContext } from 'next';
 import React, { useEffect, useState } from 'react'
 import AddButton from '../components/AddButton';
 import Input from '../components/Input';
@@ -10,22 +9,37 @@ import useVeterinarian from '../hooks/useVeterinarian';
 import { getAllTasks } from '../services/task';
 import { Message, User } from '../types/custom';
 import { HandleModal, Task as ITask } from '../types/task';
+import Alert from '../components/Alert';
+import { priorityTraduction } from '../helpers';
+
 interface Props {
   message: Message
   handleModal: HandleModal
 }
+type Priority = 'HIGH' | 'MEDIUM' | 'LOW'
 
 export default function Tasks() {
   const [input, setInput] = useState('');
   const [openModal, setOpenModal] = useState<Props['handleModal']>({operation: 'add', value: false});
-  const [taskItem, setTaskItem] = useState<ITask>({id: 0, priority: 'MEDIUM', text: ''})
+  const [priorityFilter, setPriorityFilter] = useState('');
   const [message, setMessage] = useState<Props['message']>({text: '', type: 'successful'});
-  const {veterinarian, saveTasks, tasks, deleteTask} = useVeterinarian();
+  const {veterinarian, saveTasks, tasks, deleteTask, selectedTask, handleSelectedTask} = useVeterinarian();
+
+  
+  const filteredTasksByPriority = tasks.filter(task => {
+    if(priorityFilter === '') {
+      return task;
+    }
+    if(priorityFilter === task.priority) {
+      return task;
+    }
+  })
+  const filteredTasksByText = filteredTasksByPriority.filter(task => task.text.toLowerCase().includes(input.toLowerCase()));
 
   useEffect(() => {
     const getTasks = async () => {
       try {
-        if(Object.keys(veterinarian).length !== 0) {
+        if(Object.keys(veterinarian).length !== 0 && tasks.length === 0) {
           const vet: User = veterinarian as User;
           const tasksResponse: ITask[]= await getAllTasks(vet.id, vet.token);
           saveTasks(tasksResponse);             
@@ -35,14 +49,18 @@ export default function Tasks() {
       }
     }
     getTasks();
-  }, [saveTasks, veterinarian]);
+  }, [saveTasks, veterinarian, tasks.length]);
 
-  const handleShowModal = (newValue:HandleModal) => {  
+  const handleShowModal = (newValue:HandleModal) => { 
     setOpenModal({...newValue, value: newValue.value});    
   }
-
+  const handleShowDeleteModal = (newValue:HandleModal) => {
+    handleSelectedTask({id: 0, priority: '', text: ''}); 
+    setOpenModal({...newValue, value: newValue.value});    
+  }
   const handleDelete = async (): Promise<string> => {
-    await deleteTask(taskItem);
+    await deleteTask(selectedTask);
+    handleSelectedTask({id: 0, priority: '', text: ''});
     return 'Tarea eliminada correctamente';
   }
 
@@ -54,7 +72,7 @@ export default function Tasks() {
         <div className='mt-2 mb-3 space-y-2'>
           <Input id='searcher' placeholder='Filtra tus tareas' value={input} setValue={setInput} />
           <label htmlFor="priority-filter" className='block'>
-            <select defaultValue={''} name="priority-filter" id="priority-filter" 
+            <select value={priorityFilter} name="priority-filter" id="priority-filter" onChange={(e) => setPriorityFilter(e.target.value)} 
             className='w-full p-2 border-2 border-gray-400 rounded-md md:w-3/5 mx-auto block'>
               <option value="">--Filtra por prioridad--</option>
               <option value="HIGH">Alta</option>
@@ -63,8 +81,10 @@ export default function Tasks() {
             </select>
           </label>
         </div>
-        <div className='lg:grid lg:grid-cols-2 gap-10'>
-          {tasks.map((task) => (<Task key={task.id} task={task} setTask={setTaskItem} handleShowModal={handleShowModal}/>))}
+        {filteredTasksByPriority.length === 0 && <Alert>{`No existen tareas con prioridad: ${priorityTraduction(priorityFilter as Priority)}`}</Alert>}
+        {filteredTasksByText.length === 0 && filteredTasksByPriority.length !== 0 && (<Alert>{`No existen resultados para: ${input}`}</Alert>)}
+        <div className='lg:grid lg:grid-cols-2 gap-10'>          
+          {filteredTasksByText.map((task) => (<Task key={task.id} task={task} handleShowModal={handleShowModal}/>))}
         </div>
         <div className='fixed right-0 bottom-0 m-6'>
           <AddButton onClick={handleShowModal}/>
@@ -73,7 +93,7 @@ export default function Tasks() {
         <ModalDelete
           openModal={openModal}
           handleDelete={handleDelete}
-          setOpenModal={handleShowModal}
+          setOpenModal={handleShowDeleteModal}
           title="¿Realmente quieres eliminar esta tarea?"
         />
       </div>

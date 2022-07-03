@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import Auth from "./Auth";
+import CustomHead from "./CustomHead";
 
 interface Props {
   title: string
@@ -20,12 +21,10 @@ export default function Layout({ children, title }: Props) {
   }
   return (
     <Auth>
-      <Head>
-        <title>App Veterinaria | {title}</title>
-      </Head>
+      <CustomHead title={title} description={`Administra fácilmente la seccion de ${title}`}/>
       <div className="flex">
         <nav 
-          className="w-full bg-indigo-600 flex justify-evenly p-2 fixed md:w-1/3 lg:w-1/5 md:flex md:static md:min-h-screen md:flex-col md:gap-4 md:justify-start md:py-12 md:px-4"
+          className="w-full shadow-md bg-indigo-600 flex justify-evenly p-2 fixed md:w-1/3 lg:w-1/5 md:flex md:static md:min-h-screen md:flex-col md:gap-4 md:justify-start md:py-12 md:px-4"
         >
           <Link href="/">
             <p className={`${applySelectStyles('/')}`}>Mis Pacientes</p>

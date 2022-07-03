@@ -1,5 +1,5 @@
 import { envVariables } from ".";
-import { CreateTaskResponse, DeleteTaskResponse, Task, TasksResponse } from "../types/task";
+import { CreateTaskResponse, DeleteTaskResponse, EditTaskResponse, Task, TasksResponse } from "../types/task";
 
 export const getAllTasks = async (id: number, token: string) => {
   const rawData = await fetch(`${envVariables.apiUrl}/veterinarians/${id}/tasks`, {
@@ -25,6 +25,23 @@ export const createTask = async (veterinarianId: number, token: string, task: Om
   });
   const {body, error}:CreateTaskResponse = await rawData.json();
   if(error) {
+    throw new Error(error.message);
+  }
+  return body;
+}
+
+export const updateTask = async (veterinarianId: number, token: string, task: Task) => {
+  const {id, priority, text} = task;
+  const rawData = await fetch(`${envVariables.apiUrl}/veterinarians/${veterinarianId}/tasks/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({priority, text}),
+    headers: {
+      'Content-Type': 'application/json',
+      authorization: `Bearer ${token}`
+    }
+  });
+  const {body, error}: EditTaskResponse = await rawData.json();
+  if (error) {
     throw new Error(error.message);
   }
   return body;

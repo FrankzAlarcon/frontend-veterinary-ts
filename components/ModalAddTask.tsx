@@ -1,5 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { ChangeEvent, Fragment, useState } from 'react';
+import { ChangeEvent, Fragment, useEffect, useState } from 'react';
 import useVeterinarian from '../hooks/useVeterinarian';
 import { Message } from '../types/custom';
 import Alert from './Alert';
@@ -13,7 +13,12 @@ export default function ModalAddtask({openModal, setOpenModal}:Props) {
   const [priority, setPriority] = useState<'HIGH'|'MEDIUM'|'LOW' | ''>('');
   const [text, setText] = useState('');
   const [message, setMessage] = useState<Message>({text: '', type: 'error'});
-  const {addTask} = useVeterinarian();
+  const {addTask, selectedTask, handleSelectedTask, editTask} = useVeterinarian();
+
+  useEffect(() => {
+      setPriority(selectedTask.priority);
+      setText(selectedTask.text);      
+  }, [selectedTask])
 
   const handleAddTask = () => {
     if(!text) {
@@ -24,7 +29,13 @@ export default function ModalAddtask({openModal, setOpenModal}:Props) {
     if(!priorityText) {
       priorityText = 'MEDIUM'
     }
-    addTask({text, priority: priorityText});
+    if(openModal.operation === 'add') {
+      addTask({text, priority: priorityText});
+    } else if(openModal.operation === 'edit'){  
+      if(priority) {
+        editTask({id: selectedTask.id, priority, text});
+      }
+    }
     closeModal();
   }
 
@@ -44,10 +55,11 @@ export default function ModalAddtask({openModal, setOpenModal}:Props) {
     setPriority('');
     setText('');
     setMessage({text: '', type: 'successful'});
+    handleSelectedTask({id: 0, priority: '', text: ''});
   }
 
   return (
-      <Transition appear show={openModal.value && openModal.operation === 'add'} as={Fragment}>
+      <Transition appear show={openModal.value && (openModal.operation === 'add' || openModal.operation === 'edit')} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
             as={Fragment}
@@ -98,7 +110,7 @@ export default function ModalAddtask({openModal, setOpenModal}:Props) {
                       className="submit-button bg-indigo-600 hover:bg-indigo-700 text-white rounded-md"
                       onClick={handleAddTask}
                     >
-                      Añadir
+                      {openModal.operation === 'add' ? 'Añadir' : 'Guardar'}
                     </button>
                     <button
                       type="button"

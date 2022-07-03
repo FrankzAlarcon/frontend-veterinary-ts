@@ -1,29 +1,33 @@
 import { priorityTraduction } from "../helpers";
+import useVeterinarian from "../hooks/useVeterinarian";
 import { HandleModal, Task as ITask } from "../types/task";
 
 interface Props {
   task: ITask;
   handleShowModal: (value: HandleModal) => void;
-  setTask: React.Dispatch<React.SetStateAction<ITask>>
 }
 
-export default function Task({ task, handleShowModal, setTask }: Props) {
-  const applyStylesPriority = (priority: "HIGH" | "MEDIUM" | "LOW") => {
+export default function Task({ task, handleShowModal}: Props) {
+
+  const {handleSelectedTask} = useVeterinarian();
+
+  const applyStylesPriority = (priority: "HIGH" | "MEDIUM" | "LOW" | '') => {
     if (priority === "HIGH") {
       return "text-red-600";
     } else if (priority === "MEDIUM") {
       return "text-amber-400";
-    } else {
+    } else if(priority === 'LOW'){
       return "text-lime-500";
     }
   };
 
   const handleShowModalDelete = () => {
-    setTask(task);
+    handleSelectedTask(task);
     handleShowModal({ operation: "delete", value: true });
   };
 
   const handleShowModalEdit = () => {    
+    handleSelectedTask(task);
     handleShowModal({ operation: "edit", value: true });
   };
 
