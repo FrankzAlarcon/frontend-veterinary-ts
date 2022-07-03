@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 .submit-button {
-  @apply w-full p-2 my-4 font-bold uppercase cursor-pointer transition-colors
+  @apply w-full p-2 my-4 font-bold uppercase cursor-pointer transition-colors duration-300
 }

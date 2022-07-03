@@ -1,6 +1,6 @@
 import { AuthResponse, ChangePasswordResponse, ConfirmAccountResponse, ConfirmTokenResponse, LoginValues, RecoveryPasswordResponse, RegisterResponse, RegisterValues, ResendEmailResponse, User } from "../types/custom"
 
-const envVariables = {
+export const envVariables = {
   apiUrl: process.env.NEXT_PUBLIC_SERVER_URL
 }
 

@@ -15,11 +15,6 @@ export interface User {
   token: string
 }
 
-export interface Task {
-  text: string,
-  priority: string
-}
-
 interface ErrorResponse {
   error: string, 
   statusCode: boolean,
@@ -47,3 +42,8 @@ export type RecoveryPasswordResponse = RegisterResponse;
 export type ConfirmTokenResponse = ConfirmAccountResponse;
 
 export type ChangePasswordResponse = RegisterResponse;
+
+export interface Message {
+  type: 'error' | 'successful',
+  text: string  
+}

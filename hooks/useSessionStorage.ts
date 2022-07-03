@@ -2,9 +2,10 @@
 import { useEffect, useState } from "react";
 import { User } from "../types/custom";
 
-function useSessionStorage(initialState: unknown, key: string):[unknown, (value: unknown) =>void] {
+function useSessionStorage(initialState: unknown, key: string):[unknown, (value: unknown) =>void, boolean] {
   const [value, setValue] = useState<User | unknown>(initialState);
-  
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const storageValue = sessionStorage.getItem(key);
     if (!storageValue) {
@@ -12,6 +13,7 @@ function useSessionStorage(initialState: unknown, key: string):[unknown, (value:
     } else {
       setValue(JSON.parse(storageValue));
     }
+    setLoading(false);
   }, [])
 
   const saveValue = (newValue: unknown) => {
@@ -19,7 +21,7 @@ function useSessionStorage(initialState: unknown, key: string):[unknown, (value:
     sessionStorage.setItem(key, JSON.stringify(newValue));
   }
 
-  return [value, saveValue]
+  return [value, saveValue, loading]
 }
 
 export default useSessionStorage

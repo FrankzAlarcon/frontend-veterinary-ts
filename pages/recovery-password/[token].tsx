@@ -4,16 +4,14 @@ import { ChangeEvent, useState } from "react";
 import Alert from "../../components/Alert";
 import Wave from "../../components/Wave";
 import { changePassword, confirmToken, resendEmail } from "../../services";
+import { Message } from "../../types/custom";
 
 interface Props {
   props: {
     isTokenValid: boolean;
     token?: string
   },
-  message: {
-    type: 'error' | 'successful',
-    text: string
-  }
+  message: Message
 }
 
 function ChangePassword({ isTokenValid, token }: Props['props']) {
