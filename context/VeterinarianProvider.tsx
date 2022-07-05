@@ -1,7 +1,9 @@
 import { createContext, ReactElement, useCallback, useMemo, useState } from "react";
 import useSessionStorage from "../hooks/useSessionStorage";
 import { createTask, deleteTaskFnc, updateTask } from "../services/task";
+import { Appointment } from "../types/appoinment";
 import { User } from "../types/custom";
+import { CustomerComplete } from "../types/customer";
 import { Task } from "../types/task";
 
 export interface ContextProps {
@@ -17,10 +19,14 @@ export interface ContextProps {
     saveTasks: (newTasks: Task[]) => void,
     loading: boolean,
     selectedTask: Task,
-    handleSelectedTask: (value: Task) => void
-    addTask: (newTask: Omit<Task, 'id'>) => Promise<void>
-    editTask: (newTask: Task) => Promise<void>
-    deleteTask: (task: Task) => Promise<void>
+    handleSelectedTask: (value: Task) => void,
+    addTask: (newTask: Omit<Task, 'id'>) => Promise<void>,
+    editTask: (newTask: Task) => Promise<void>,
+    deleteTask: (task: Task) => Promise<void>,
+    appointments: Appointment[],  
+    handleAppointments: (data: Appointment[]) => void 
+    customer: CustomerComplete,
+    handleCustomer: (data: CustomerComplete) => void
   }
 }
 
@@ -30,15 +36,26 @@ export default function VeterinarianProvider({children}:ContextProps['props']) {
   const [veterinarian, setVeterinarian, loading] = useSessionStorage({}, 'veterinarian');
   const [isAuth, setIsAuth] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([]); 
-  const [selectedTask, setSelectedTask] = useState<Task>({id: 0, priority: 'MEDIUM', text: ''})
-  const [error, setError] = useState(''); 
+  const [selectedTask, setSelectedTask] = useState<Task>({id: 0, priority: 'MEDIUM', text: ''});
+  const [error, setError] = useState('');
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [customer, setCustomer] = useState<CustomerComplete>({id: 0, email: '', name: '', pets: [], appointments: []});
 
+  /**Wrappers of setState */
   const handleAuth = (value: boolean) => {
     setIsAuth(value);
   }
 
   const saveTasks = (newValue: Task[]) => {
     setTasks(newValue);
+  }
+
+  const handleCustomer = (data: CustomerComplete) => {
+    setCustomer(data);
+  }
+
+  const handleAppointments = (data: Appointment[]) => {
+    setAppointments(data)
   }
 
   const addTask = useCallback(async (task: Omit<Task, 'id'>) => {
@@ -90,8 +107,13 @@ export default function VeterinarianProvider({children}:ContextProps['props']) {
     deleteTask,
     selectedTask,
     handleSelectedTask,
-    editTask
-  }), [veterinarian, setVeterinarian, isAuth, tasks, loading, addTask, deleteTask, selectedTask, editTask])
+    editTask,
+    appointments,
+    handleAppointments,
+    customer,
+    handleCustomer    
+  }), [veterinarian, setVeterinarian, isAuth, tasks, loading, addTask,deleteTask, selectedTask,
+    editTask, appointments, customer])  
   return (
     <VeterinarianContext.Provider value={values}>
       {children}

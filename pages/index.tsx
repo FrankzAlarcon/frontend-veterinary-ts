@@ -1,10 +1,16 @@
 import type { NextPage } from 'next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Input from '../components/Input';
 import Layout from '../components/Layout';
+import useVeterinarian from '../hooks/useVeterinarian';
 
 const Home: NextPage = () => {
   const [input, setInput] = useState('');
+  const {handleCustomer} = useVeterinarian();
+  useEffect(() => {
+    //Quitar el estado del customer
+    handleCustomer({id: 0, name: '', email: '', appointments: [], pets: []})
+  }, [])
 
   return (
     <Layout title='Lista de Pacientes'>

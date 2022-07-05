@@ -1,6 +1,6 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import Alert from "../../components/Alert";
 import Wave from "../../components/Wave";
 import { changePassword, confirmToken, resendEmail } from "../../services";
@@ -154,7 +154,7 @@ export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   if (context.params && context.params.token) {
-    try {
+    try {      
       const { token } = context.params;
       const rta = await confirmToken(token as string);
       return {

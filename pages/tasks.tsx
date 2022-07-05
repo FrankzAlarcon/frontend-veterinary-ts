@@ -11,6 +11,7 @@ import { Message, User } from '../types/custom';
 import { HandleModal, Task as ITask } from '../types/task';
 import Alert from '../components/Alert';
 import { priorityTraduction } from '../helpers';
+import Spinner from '../components/Spinner';
 
 interface Props {
   message: Message
@@ -23,7 +24,13 @@ export default function Tasks() {
   const [openModal, setOpenModal] = useState<Props['handleModal']>({operation: 'add', value: false});
   const [priorityFilter, setPriorityFilter] = useState('');
   const [message, setMessage] = useState<Props['message']>({text: '', type: 'successful'});
-  const {veterinarian, saveTasks, tasks, deleteTask, selectedTask, handleSelectedTask} = useVeterinarian();
+  const [loading, setLoading] = useState(false);
+  const {veterinarian, saveTasks, tasks, deleteTask, selectedTask, handleSelectedTask, handleCustomer} = useVeterinarian();
+
+  useEffect(() => {
+    //Quitar el estado del customer
+    handleCustomer({id: 0, name: '', email: '', appointments: [], pets: []});
+  }, [])
 
   
   const filteredTasksByPriority = tasks.filter(task => {
@@ -39,13 +46,16 @@ export default function Tasks() {
   useEffect(() => {
     const getTasks = async () => {
       try {
+        setLoading(true);
         if(Object.keys(veterinarian).length !== 0 && tasks.length === 0) {
           const vet: User = veterinarian as User;
           const tasksResponse: ITask[]= await getAllTasks(vet.id, vet.token);
           saveTasks(tasksResponse);             
-        }
+        }        
       } catch (error) {
         setMessage({type: 'error', text: (error as Error).message});
+      } finally {
+        setLoading(false);
       }
     }
     getTasks();
@@ -81,8 +91,9 @@ export default function Tasks() {
             </select>
           </label>
         </div>
-        {filteredTasksByPriority.length === 0 && <Alert>{`No existen tareas con prioridad: ${priorityTraduction(priorityFilter as Priority)}`}</Alert>}
-        {filteredTasksByText.length === 0 && filteredTasksByPriority.length !== 0 && (<Alert>{`No existen resultados para: ${input}`}</Alert>)}
+        {loading && <Spinner type='purple'/>}
+        {!loading && filteredTasksByPriority.length === 0 && <Alert>{`No existen tareas con prioridad: ${priorityTraduction(priorityFilter as Priority)}`}</Alert>}
+        {!loading && filteredTasksByText.length === 0 && filteredTasksByPriority.length !== 0 && (<Alert>{`No existen resultados para: ${input}`}</Alert>)}
         <div className='lg:grid lg:grid-cols-2 gap-10'>          
           {filteredTasksByText.map((task) => (<Task key={task.id} task={task} handleShowModal={handleShowModal}/>))}
         </div>

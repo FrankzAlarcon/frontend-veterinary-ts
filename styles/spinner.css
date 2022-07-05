@@ -19,7 +19,9 @@
   -webkit-animation-delay: -0.32s;
   animation-delay: -0.32s;
 }
-
+.purple > div {
+  background-color: rgb(79 70 229);
+}
 .spinner .bounce2 {
   -webkit-animation-delay: -0.16s;
   animation-delay: -0.16s;
