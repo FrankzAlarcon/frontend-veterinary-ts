@@ -28,7 +28,7 @@ export interface CreateCustomerResponse {
 
 export interface CustomerByEmail {
   error: ErrorResponse,
-  body: CustomerWithPet | null
+  body: CustomerComplete | null
 }
 
 export interface CustomerResponse {
@@ -47,3 +47,15 @@ export interface CreatePetResponse {
   body: Pet
 }
 
+export interface CustomerInfo {
+  id: number,
+  name: string,
+  email: string,
+  citas_terminadas: number | null,
+  citas_pendientes: number | null,
+  num_pets: number | null
+}
+export interface CustomerInfoResponse {
+  error: ErrorResponse,
+  body: CustomerInfo[]
+}

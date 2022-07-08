@@ -134,6 +134,7 @@ export default function ExistingCustomerForm({handleModal}: Props) {
                   />
                   {errors.animalType && touched.animalType && <Alert type="error">{errors.animalType}</Alert>}
                 </label>
+                <button className="submit-button bg-indigo-600 hover:bg-indigo-700 text-white">Nueva Mascota</button>
               </div>
             </div>
             <div className="mb-2">

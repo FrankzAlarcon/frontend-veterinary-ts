@@ -5,3 +5,7 @@
 .submit-button {
   @apply w-full p-2 my-4 font-bold uppercase cursor-pointer transition-colors duration-300
 }
+
+.new-width {
+  @apply w-28 m-0
+}

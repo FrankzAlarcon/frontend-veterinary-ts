@@ -35,7 +35,7 @@ export default function NewCustomer() {
         <p className='text-center my-2'>Añade tus nuevos clientes para que puedas <span className='text-indigo-600 font-bold'>Administrarlos</span></p>
         {requestState === '' && <VerifyCustomerForm setRequestState={handleRequest} />}
         {requestState === 'found' && <ExistingCustomerForm handleModal={handleShowModal}/>}
-        {requestState === 'not-found' && <NewCustomerForm />}
+        {requestState === 'not-found' && <NewCustomerForm handleModal={handleShowModal}/>}
         <ModalConfirmAction title='Se ha creado la cita' showModal={showModal}  handleModal={handleShowModal} nextRoute={`customer/${customer.id}`}/>
       </div>
     </Layout>

@@ -36,7 +36,7 @@ export default function Layout({ children, title }: Props) {
             <p className={`${applySelectStyles('/tasks')}`}>Mis Tareas</p>
           </Link>
         </nav>
-        <div className="min-h-screen  md:w-2/3 w-full p-2 pt-14 md:py-4 md:px-6 container mx-auto">{children}</div>
+        <div className="min-h-screen md:w-2/3 w-full p-2 pt-14 md:py-4 md:px-6 container mx-auto">{children}</div>
       </div>
     </Auth>
   );

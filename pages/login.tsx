@@ -13,7 +13,8 @@ const Home: NextPage = () => {
   useEffect(() => {
     if(Object.keys(veterinarian).length !== 0) {
       router.push('/');
-      document.cookie = `token=${(veterinarian as User).token}`
+      document.cookie = `token=${(veterinarian as User).token}`;
+      document.cookie = `veterinarianId=${(veterinarian as User).id}`;
     }
   }, [router, veterinarian]);
   return (

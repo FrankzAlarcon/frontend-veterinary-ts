@@ -9,7 +9,11 @@ import { NewCustomer } from "../types/customer";
 import Alert from "./Alert";
 import Spinner from "./Spinner";
 
-export default function NewCustomerForm() {
+interface Props {
+  handleModal: (value: boolean) => void
+}
+
+export default function NewCustomerForm({handleModal}: Props) {
   const [loading, setLoading] = useState(false);
   const { veterinarian, handleCustomer, customer } = useVeterinarian();
 
@@ -21,6 +25,7 @@ export default function NewCustomerForm() {
       const appointment = await createEntireAppointment(vet.id, vet.token, values);
       const customerInfo = await getCustomer(vet.token, appointment.customerId);
       handleCustomer(customerInfo);
+      handleModal(true);    
     } catch (error) {
       
     } finally {
