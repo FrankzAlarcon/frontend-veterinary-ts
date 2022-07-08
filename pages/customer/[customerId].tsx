@@ -23,6 +23,11 @@ export async function getServerSideProps({params, req}: GetServerSidePropsContex
     const customerId = Number(params?.customerId);
     const {token} = req.cookies;
     const customer = await getCustomer(token ?? '', customerId);
+    if(customer.appointments.length === 0 ) {
+      return {
+        notFound: true
+      }
+    }
     return {
       props: {
         customer
