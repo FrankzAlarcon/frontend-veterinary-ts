@@ -27,10 +27,10 @@ export default function Layout({ children, title }: Props) {
           className="w-full shadow-md bg-indigo-600 flex justify-evenly p-2 fixed md:w-1/3 lg:w-1/5 md:flex md:static md:min-h-screen md:flex-col md:gap-4 md:justify-start md:py-12 md:px-4"
         >
           <Link href="/">
-            <p className={`${applySelectStyles('/')}`}>Mis Pacientes</p>
+            <p className={`${applySelectStyles('/')}`}>Mis Clientes</p>
           </Link>
-          <Link href="/new-patient">
-            <p className={`${applySelectStyles('/new-patient')}`}>Nuevo Paciente</p>
+          <Link href="/new-customer">
+            <p className={`${applySelectStyles('/new-customer')}`}>Nuevo Cliente</p>
           </Link>
           <Link href="/tasks">
             <p className={`${applySelectStyles('/tasks')}`}>Mis Tareas</p>

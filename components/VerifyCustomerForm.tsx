@@ -6,6 +6,7 @@ import { CustomerEntry } from '../types/customer';
 import useVeterinarian from '../hooks/useVeterinarian';
 import Alert from './Alert';
 import Spinner from './Spinner';
+import { verifyCustomerSchema } from '../schemas';
 
 interface Props {
   //requestState: 'founded' | 'not-founded' | '',
@@ -21,7 +22,6 @@ export default function VerifyCustomerForm({setRequestState}: Props) {
       setLoading(true)
       const vet = veterinarian as User;
       const customer = await getCustomerByEmail(vet.token, values.email);
-      console.log(customer)
       if (customer) {
         handleCustomer(customer);
         setRequestState('found');
@@ -40,6 +40,7 @@ export default function VerifyCustomerForm({setRequestState}: Props) {
       <Formik
         initialValues={{name: '', email: ''}}
         onSubmit={handleVerified}
+        validationSchema={verifyCustomerSchema}
       >
         {
           ({values, touched, errors}) => (

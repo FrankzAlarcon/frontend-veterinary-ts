@@ -8,3 +8,8 @@ export const priorityTraduction = (priority: 'HIGH' | 'MEDIUM' | 'LOW' | ''): st
   }
   return priority;
 }
+
+export const formatDate = (date: string): string => {
+  const newDate = new Date(date).toISOString().split('.')[0].slice(0,-3)
+  return newDate
+}

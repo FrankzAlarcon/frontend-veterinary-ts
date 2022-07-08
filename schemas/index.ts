@@ -25,6 +25,15 @@ export const newCustomerSchema = yup.object().shape({
   name, email, petName, animalType, date, symptoms
 });
 
-export const verifiedCustomerSchema = yup.object().shape({
+export const verifyCustomerSchema = yup.object().shape({
   name, email
+});
+
+export const newAppointmentSchema = yup.object().shape({
+  name,
+  email,
+  petName,
+  animalType,
+  date,
+  symptoms
 })

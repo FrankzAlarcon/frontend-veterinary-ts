@@ -5,6 +5,7 @@ import CustomHead from '../components/CustomHead';
 import LoginForm from '../components/LoginForm';
 import Wave from '../components/Wave';
 import useVeterinarian from '../hooks/useVeterinarian';
+import { User } from '../types/custom';
 
 const Home: NextPage = () => {
   const {veterinarian} = useVeterinarian();
@@ -12,6 +13,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     if(Object.keys(veterinarian).length !== 0) {
       router.push('/');
+      document.cookie = `token=${(veterinarian as User).token}`
     }
   }, [router, veterinarian]);
   return (

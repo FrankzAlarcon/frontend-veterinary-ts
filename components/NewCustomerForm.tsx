@@ -2,7 +2,7 @@ import { Formik, Field, Form, FormikHelpers } from "formik";
 import { useState } from "react";
 import useVeterinarian from "../hooks/useVeterinarian";
 import { newCustomerSchema } from "../schemas";
-import { createAppointmet } from "../services/appointment";
+import { createEntireAppointment } from "../services/appointment";
 import { getCustomer } from "../services/customer";
 import { User } from "../types/custom";
 import { NewCustomer } from "../types/customer";
@@ -18,7 +18,7 @@ export default function NewCustomerForm() {
     try {
       setLoading(true)
       const vet = veterinarian as User;
-      const appointment = await createAppointmet(vet.id, vet.token, values);
+      const appointment = await createEntireAppointment(vet.id, vet.token, values);
       const customerInfo = await getCustomer(vet.token, appointment.customerId);
       handleCustomer(customerInfo);
     } catch (error) {
