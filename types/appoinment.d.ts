@@ -25,6 +25,10 @@ export interface CompleteAppointment extends Appointment{
   customer: Omit<CustomerComplete, 'appointments'>
 }
 
+export type AppointmentWithPet = Appointment & {
+  pet: Pet
+}
+
 export interface CompleteAppointmentResponse {
   error: ErrorResponse,
   body: CompleteAppointment

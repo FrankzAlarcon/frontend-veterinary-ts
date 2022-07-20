@@ -13,3 +13,13 @@ export const formatDate = (date: string): string => {
   const newDate = new Date(date).toISOString().split('.')[0].slice(0,-3)
   return newDate
 }
+
+export const formatStringToDate = (date: string) => {
+  return new Date(date).toLocaleDateString('es-ES', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  });
+}

@@ -2,24 +2,7 @@ import { envVariables } from ".";
 import { CreateAppointmentResponse, CompleteAppointment, CompleteAppointmentResponse, CreateAppointment } from "../types/appoinment";
 import { CreatePetResponse, NewCustomer } from "../types/customer";
 import { createCustomer } from "./customer";
-
-
-
-const createPet = async (token: string, customerId: number, name: string, animalType: string)  => {
-  const rawData = await fetch(`${envVariables.apiUrl}/customers/${customerId}/pets`, {
-    method: 'POST',
-    body: JSON.stringify({name, animalType}),
-    headers: {
-      'Content-Type': 'application/json',
-      authorization: `Bearer ${token}`
-    }
-  });
-  const {body, error}:CreatePetResponse = await rawData.json();
-  if (error) {
-    throw new Error(error.message);
-  }
-  return body;
-}
+import { createPet } from "./pet";
 
 export const getCompleteAppointment = async (appointmentId: number, token: string): Promise<CompleteAppointment> => {
   const rawData = await fetch(`${envVariables.apiUrl}/appointments/${appointmentId}`, {

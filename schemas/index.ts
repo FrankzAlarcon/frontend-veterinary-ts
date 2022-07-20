@@ -29,6 +29,11 @@ export const verifyCustomerSchema = yup.object().shape({
   name, email
 });
 
+export const newPetSchema = yup.object().shape({
+  name: petName,
+  animalType
+})
+
 export const newAppointmentSchema = yup.object().shape({
   name,
   email,

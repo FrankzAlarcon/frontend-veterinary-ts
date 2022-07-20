@@ -1,4 +1,4 @@
-import { Appointment } from "./appoinment"
+import { Appointment, AppointmentWithPet } from "./appoinment"
 import { ErrorResponse } from "./custom"
 
 export interface NewCustomer {
@@ -18,7 +18,7 @@ interface Customer {
 
 export interface CustomerComplete extends Customer {
   pets: Pet[],
-  appointments: Appointment[]
+  appointments: AppointmentWithPet[]
 }
 
 export interface CreateCustomerResponse {
