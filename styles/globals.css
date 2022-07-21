@@ -9,3 +9,11 @@
 .new-width {
   @apply w-28 m-0
 }
+.no-margin {
+  @apply m-0
+}
+
+#price::-webkit-inner-spin-button, #price::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

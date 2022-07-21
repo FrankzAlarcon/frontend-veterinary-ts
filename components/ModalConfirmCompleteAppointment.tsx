@@ -1,34 +1,20 @@
-import { Dialog, Transition, } from '@headlessui/react';
-import { Fragment, useState } from 'react';
-import { Message } from '../types/custom';
-import Alert from './Alert';
+import { Dialog, Transition } from '@headlessui/react';
+import React, { Fragment } from 'react';
 
 interface Props {
-  openModal: {operation: 'add' | 'delete' | 'edit', value: boolean},
-  setOpenModal: (value: {operation: 'add' | 'delete' | 'edit', value: boolean}) => void
+  openModal: boolean,
+  setOpenModal: (value: boolean) => void
   title: string,
-  text: string,
-  handleDelete: () => Promise<string>
+  text: string | string[],
+  handleComplete: () => Promise<void>
 }
 
-export default function ModalDelete({openModal, setOpenModal, title, handleDelete, text}:Props) {
-  const [message, setMessage] = useState<Message>({text: '', type: 'error'});
-
-  const handleDeleteTask = async () => {
-    const msg = await handleDelete();
-    setMessage({type:'successful', text: msg})
-    setTimeout(() => {
-      closeModal();
-    }, 500);
+export default function ModalConfirmCompleteAppointment({title, text, openModal, setOpenModal, handleComplete}: Props) {
+  const closeModal = () => {
+    setOpenModal(false);
   }
-
-  function closeModal() {    
-    setOpenModal({operation: 'delete', value: false});    
-    setMessage({text: '', type: 'successful'});    
-  }
-
   return (
-      <Transition appear show={openModal.value && openModal.operation === 'delete'} as={Fragment}>
+    <Transition appear show={openModal} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
             as={Fragment}
@@ -64,19 +50,19 @@ export default function ModalDelete({openModal, setOpenModal, title, handleDelet
                   >
                     {title}
                   </Dialog.Title>
-                  <p className='text-center my-2 text-sm'>{text}</p>      
-                  {message.text && <Alert modal={true}>{message.text}</Alert>}            
-                  <div className={`flex ${message.text ? 'pt-10': ''} justify-evenly gap-5`}>
-                    <button
-                      type="button"
-                      className="submit-button bg-red-600 hover:bg-red-700 text-white rounded-md"
-                      onClick={handleDeleteTask}
-                    >
-                      Eliminar
-                    </button>
+                  <p className='text-center mt-2'><span className='font-bold'>Receta:</span> {text[0]}</p>                      
+                  <p className='text-center mb-2'><span className='font-bold'>Precio:</span> {text[1]}</p>                      
+                  <div className={`flex justify-evenly gap-5`}>
                     <button
                       type="button"
                       className="submit-button bg-blue-500 hover:bg-blue-700 text-white rounded-md"
+                      onClick={handleComplete}
+                    >
+                      Sí, guardar
+                    </button>
+                    <button
+                      type="button"
+                      className="submit-button bg-red-600 hover:bg-red-700 text-white rounded-md"
                       onClick={closeModal}
                     >
                       Cancelar

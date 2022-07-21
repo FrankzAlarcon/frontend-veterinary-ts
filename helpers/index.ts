@@ -1,3 +1,5 @@
+import { Task } from "../types/task";
+
 export const priorityTraduction = (priority: 'HIGH' | 'MEDIUM' | 'LOW' | ''): string => {
   if(priority === 'HIGH') {
     return 'Alta';
@@ -22,4 +24,28 @@ export const formatStringToDate = (date: string) => {
     hour: 'numeric',
     minute: 'numeric',
   });
+}
+
+export const formatMoney = (money: number): string => {
+  return money.toLocaleString('es-ES', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+export const filterTasksByPriority = (tasks: Task[], priority: 'HIGH' | 'MEDIUM' | 'LOW' | ''): Task[] => {
+  return tasks.filter(task => {    
+    if(priority === '') {
+      return task;
+    }
+    if(priority === task.priority) {
+      return task;
+    }
+  });
+}
+
+export const filterTasksByText = (tasks: Task[], text: string): Task[] => {
+  return tasks.filter(task => task.text.toLowerCase().includes(text.toLowerCase()));
 }

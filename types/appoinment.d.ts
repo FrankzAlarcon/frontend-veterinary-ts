@@ -15,6 +15,8 @@ export interface Appointment {
 
 export type CreateAppointment = Omit<Appointment, 'id' | 'price'>
 
+export type ChangesAppointment = Pick<Appointment, 'isCompleted'| 'prescription'| 'price'>
+
 export interface CreateAppointmentResponse {
   error: ErrorResponse,
   body: Appointment
@@ -32,4 +34,9 @@ export type AppointmentWithPet = Appointment & {
 export interface CompleteAppointmentResponse {
   error: ErrorResponse,
   body: CompleteAppointment
+}
+
+export interface DeleteAppointmentsResponse {
+  error: ErrorResponse,
+  body: string
 }

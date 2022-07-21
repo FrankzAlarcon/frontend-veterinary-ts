@@ -13,7 +13,7 @@ interface Props {
 export default function Layout({ children, title }: Props) {
   const router = useRouter();
   const applySelectStyles = (path: string): string => {
-    let styles = 'p-2 rounded-md cursor-pointer hover:bg-violet-400 hover:text-white transition-colors duration-300 md:text-center lg:text-lg'
+    let styles = 'p-2 rounded-md cursor-pointer font-bold hover:bg-violet-400 hover:text-white transition-colors duration-300 md:text-center lg:text-lg'
     if(router.pathname === path) {
       return styles + ' bg-violet-400 text-white text-sm lg:text-lg font-black uppercase shadow-md'
     }

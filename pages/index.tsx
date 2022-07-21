@@ -3,24 +3,59 @@ import { useEffect, useState } from 'react';
 import CustomerCard from '../components/CustomerCard';
 import Input from '../components/Input';
 import Layout from '../components/Layout';
+import ModalDelete from '../components/ModalDelete';
 import useVeterinarian from '../hooks/useVeterinarian';
+import { deleteAppointmentsOfVeterinarian } from '../services/appointment';
 import { getCustomersInfo } from '../services/customer';
+import { User } from '../types/custom';
 import { CustomerInfo } from '../types/customer';
 
 interface Props {
-  customersPreview: CustomerInfo[]
+  props: {
+    customersPreview: CustomerInfo[]
+  }
+  modal: {
+    operation: "add" | "delete" | "edit";
+    value: boolean;
+  }
 }
 
-const Home: NextPage<Props> = ({customersPreview}) => {
+const Home: NextPage<Props['props']> = ({customersPreview}) => {
   const [input, setInput] = useState('');
-  const {handleCustomer} = useVeterinarian();
+  const [showModal, setShowModal] = useState<Props['modal']>({operation: 'delete', value: false});
+  const [selectedCustomer, setSelectedCustomer] = useState<CustomerInfo | {}>();
+  const [customers, setCustomers] = useState<CustomerInfo[]>(customersPreview);
+  const {handleCustomer, veterinarian} = useVeterinarian();
 
-  const filteredCustomerInfo = customersPreview.filter(customer => customer.name.toLowerCase().includes(input.toLowerCase()))
+  const filteredCustomerInfo = customers.filter(customer => customer.name.toLowerCase().includes(input.toLowerCase()));
 
   useEffect(() => {
     //Quitar el estado del customer
     handleCustomer({id: 0, name: '', email: '', appointments: [], pets: []})
   }, []);
+
+  const handleShowModal = (value: Props['modal']) => {
+    setShowModal(value);
+    setSelectedCustomer({});
+  }
+
+  const handleDeleteCustomer = async () => {
+    try {
+      //Relizar peticion
+      await deleteAppointmentsOfVeterinarian(
+        (veterinarian as User).id,
+        (selectedCustomer as CustomerInfo).id,
+        (veterinarian as User).token);
+      //Cambiar estado de customers
+      const newCustomers = customers.filter(customer => customer.id !== (selectedCustomer as CustomerInfo).id);
+      setCustomers(newCustomers);
+      //Reestablecer estados
+      setSelectedCustomer({});
+      return 'Eliminado correctamente';
+    } catch (error) {
+      return 'Ha ocurrido un error intentando eliminar el cliente';
+    } 
+  }
 
   return (
     <Layout title='Lista de Pacientes'>
@@ -30,9 +65,16 @@ const Home: NextPage<Props> = ({customersPreview}) => {
         <Input id='searcher' placeholder='Escribe el nombre de un cliente' value={input} setValue={setInput}/>
         <div>
           {
-            filteredCustomerInfo.map((customer) => <CustomerCard key={customer.id} customer={customer}/>)
+            filteredCustomerInfo.map((customer) => <CustomerCard key={customer.id} customer={customer} showModalDelete={setShowModal} handleSelectedCustomer={setSelectedCustomer}/>)
           }
         </div>
+        <ModalDelete
+          openModal={showModal}
+          title={`¿Realmente quieres eliminar a ${(selectedCustomer as CustomerInfo)?.name ? (selectedCustomer as CustomerInfo)?.name: 'este usuario'}?`}
+          text='No podrás recuperarlo!!'
+          handleDelete={handleDeleteCustomer}
+          setOpenModal={handleShowModal}          
+        />
       </div>    
     </Layout>
   )

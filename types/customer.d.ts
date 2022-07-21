@@ -10,7 +10,7 @@ export interface NewCustomer {
   symptoms:string
 }
 
-interface Customer {
+export interface Customer {
   id: number,
   name: string,
   email: string

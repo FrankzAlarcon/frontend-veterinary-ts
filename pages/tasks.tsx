@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import AddButton from '../components/AddButton';
 import Input from '../components/Input';
 import Layout from '../components/Layout'
@@ -10,7 +10,7 @@ import { getAllTasks } from '../services/task';
 import { Message, User } from '../types/custom';
 import { HandleModal, Task as ITask } from '../types/task';
 import Alert from '../components/Alert';
-import { priorityTraduction } from '../helpers';
+import { filterTasksByPriority, filterTasksByText, priorityTraduction } from '../helpers';
 import Spinner from '../components/Spinner';
 
 interface Props {
@@ -22,7 +22,7 @@ type Priority = 'HIGH' | 'MEDIUM' | 'LOW'
 export default function Tasks() {
   const [input, setInput] = useState('');
   const [openModal, setOpenModal] = useState<Props['handleModal']>({operation: 'add', value: false});
-  const [priorityFilter, setPriorityFilter] = useState('');
+  const [priorityFilter, setPriorityFilter] = useState<'' | Priority>('');
   const [message, setMessage] = useState<Props['message']>({text: '', type: 'successful'});
   const [loading, setLoading] = useState(false);
   const {veterinarian, saveTasks, tasks, deleteTask, selectedTask, handleSelectedTask, handleCustomer} = useVeterinarian();
@@ -33,15 +33,8 @@ export default function Tasks() {
   }, [])
 
   
-  const filteredTasksByPriority = tasks.filter(task => {
-    if(priorityFilter === '') {
-      return task;
-    }
-    if(priorityFilter === task.priority) {
-      return task;
-    }
-  })
-  const filteredTasksByText = filteredTasksByPriority.filter(task => task.text.toLowerCase().includes(input.toLowerCase()));
+  const filteredTasksByPriority = useMemo(() => filterTasksByPriority(tasks, priorityFilter), [tasks, priorityFilter]);
+  const filteredTasksByText = useMemo(() => filterTasksByText(filteredTasksByPriority, input), [filteredTasksByPriority, input]);
 
   useEffect(() => {
     const getTasks = async () => {
@@ -82,7 +75,7 @@ export default function Tasks() {
         <div className='mt-2 mb-3 space-y-2'>
           <Input id='searcher' placeholder='Filtra tus tareas' value={input} setValue={setInput} />
           <label htmlFor="priority-filter" className='block'>
-            <select value={priorityFilter} name="priority-filter" id="priority-filter" onChange={(e) => setPriorityFilter(e.target.value)} 
+            <select value={priorityFilter} name="priority-filter" id="priority-filter" onChange={(e) => setPriorityFilter((e.target.value as Priority | '') )} 
             className='w-full p-2 border-2 border-gray-400 rounded-md md:w-3/5 mx-auto block'>
               <option value="">--Filtra por prioridad--</option>
               <option value="HIGH">Alta</option>
@@ -106,6 +99,7 @@ export default function Tasks() {
           handleDelete={handleDelete}
           setOpenModal={handleShowDeleteModal}
           title="¿Realmente quieres eliminar esta tarea?"
+          text='No podrás recuperarla!!'
         />
       </div>
     </Layout>

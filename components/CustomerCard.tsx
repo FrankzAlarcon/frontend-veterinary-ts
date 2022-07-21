@@ -1,18 +1,19 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
-import useVeterinarian from "../hooks/useVeterinarian";
-import { getCustomer } from "../services/customer";
-import { User } from "../types/custom";
 import { CustomerInfo } from "../types/customer";
 
 interface Props {
   customer: CustomerInfo;
+  showModalDelete: (value: {
+    operation: "add" | "delete" | "edit";
+    value: boolean;
+  }) => void;
+  handleSelectedCustomer: (customer: CustomerInfo) => void;
 }
 
-export default function CustomerCard({ customer }: Props) {
-  
+export default function CustomerCard({ customer, showModalDelete, handleSelectedCustomer }: Props) {
   const handleDeleteCustomer = async () => {
-
+    showModalDelete({ operation: "delete", value: true });
+    handleSelectedCustomer(customer);
   }
 
   return (
