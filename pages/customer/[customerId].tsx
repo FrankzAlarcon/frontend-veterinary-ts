@@ -89,7 +89,7 @@ export default function CustomerDetails({customer}: Props) {
   return (
     <Layout title='Detalles de Paciente'>
       <div>
-        <h1 className='text-3xl font-black text-center mt-5 md:text-4xl lg:text-5xl'>Seguimiento de <span className='text-indigo-600'>Pacientes</span></h1>
+        <h1 className='text-3xl font-black text-center mt-2 md:text-4xl lg:text-5xl'>Seguimiento de <span className='text-indigo-600'>Pacientes</span></h1>
         <p className='text-lg text-center my-2'>Observa y administra las <span className='font-bold text-indigo-600'>citas de tus pacientes</span></p>
         <div className='bg-white p-2 rounded-md shadow-md lg:px-6 lg:py-4'>          
           {

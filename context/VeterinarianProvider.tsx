@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { createContext, ReactElement, useCallback, useMemo, useState } from "react";
 import useSessionStorage from "../hooks/useSessionStorage";
 import { createTask, deleteTaskFnc, updateTask } from "../services/task";
@@ -27,6 +28,7 @@ export interface ContextProps {
     handleAppointments: (data: Appointment[]) => void 
     customer: CustomerComplete,
     handleCustomer: (data: CustomerComplete) => void
+    handleLogout: () => void
   }
 }
 
@@ -40,6 +42,7 @@ export default function VeterinarianProvider({children}:ContextProps['props']) {
   const [error, setError] = useState('');
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [customer, setCustomer] = useState<CustomerComplete>({id: 0, email: '', name: '', pets: [], appointments: []});
+  const router = useRouter();
 
   /**Wrappers of setState */
   const handleAuth = (value: boolean) => {
@@ -95,6 +98,15 @@ export default function VeterinarianProvider({children}:ContextProps['props']) {
     }
   }, [tasks, veterinarian]);
 
+  const handleLogout = useCallback(() => {
+    setVeterinarian({});
+    setIsAuth(false);
+    setTasks([]);
+    setSelectedTask({id: 0, priority: 'MEDIUM', text: ''});
+    setAppointments([]);
+    router.push('/login');    
+  }, [router, setVeterinarian]);
+
   const values = useMemo(() =>({
     veterinarian: (veterinarian as ContextProps['defaultContext']['veterinarian']),
     setVeterinarian,
@@ -111,9 +123,10 @@ export default function VeterinarianProvider({children}:ContextProps['props']) {
     appointments,
     handleAppointments,
     customer,
-    handleCustomer    
+    handleCustomer,
+    handleLogout,
   }), [veterinarian, setVeterinarian, isAuth, tasks, loading, addTask,deleteTask, selectedTask,
-    editTask, appointments, customer])  
+    editTask, appointments, customer, handleLogout])  
   return (
     <VeterinarianContext.Provider value={values}>
       {children}
