@@ -40,6 +40,11 @@ export async function getServerSideProps({params, req}: GetServerSidePropsContex
         notFound: true
       }
     }
+    if(appointment.isCompleted){
+      return {
+        notFound: true
+      }
+    }
     return {
       props: {
         appointment

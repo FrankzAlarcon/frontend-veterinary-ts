@@ -164,6 +164,7 @@ export default function EditAppointmentForm({appointment, handleModal}: Props['p
                   />
                   {errors.animalType && touched.animalType && <Alert type="error">{errors.animalType}</Alert>}
                 </label>
+              </div>
                 {
                   showNewPetForm ? (
                     <button
@@ -179,7 +180,6 @@ export default function EditAppointmentForm({appointment, handleModal}: Props['p
                     >Nueva Mascota</button>
                   )
                 }
-              </div>
             </div>
             <div className="mb-2">
               <h2 className="text-center font-black uppercase text-xl lg:mb-2">
