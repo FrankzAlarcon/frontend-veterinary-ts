@@ -57,7 +57,7 @@ function ChangePassword({ isTokenValid, token }: Props['props']) {
 
   return (
     <>
-      <div className="container mx-auto p-4 text-center">
+      <div className="container mx-auto p-4 text-center absolute top-0 bottom-0 left-0 right-0 my-auto">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-indigo-600 mt-10">
           Veterinary <span className="text-black">App</span>
         </h1>

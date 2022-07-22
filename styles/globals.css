@@ -17,3 +17,7 @@
   -webkit-appearance: none;
   margin: 0;
 }
+.gradient {
+  background: rgb(224,228,236);
+  background: linear-gradient(90deg, rgba(224,228,236,1) 4%, rgba(226,226,244,1) 16%, rgba(226,225,245,1) 47%, rgba(214,212,245,1) 76%, rgba(228,228,246,1) 100%);
+}

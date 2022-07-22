@@ -37,7 +37,7 @@ function RecoveryPassword() {
   return (
     <>
       <CustomHead title="Recuperar Contraseña" description="Recupera tu contraseña para que no pierdas acceso" />
-      <div className="container mx-auto p-4 text-center">
+      <div className="container mx-auto p-4 text-center absolute top-0 bottom-0 left-0 right-0 my-auto">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-indigo-600 mt-10">
           Veterinary <span className="text-black">App</span>
         </h1>
@@ -45,7 +45,7 @@ function RecoveryPassword() {
           Restaura tu contraseña para no{" "}
           <span className="text-indigo-600 font-bold">perder acceso</span>
         </p>
-        <div className="mt-14 bg-white shadow-md w-full p-2 md:w-3/4 mx-auto lg:w-1/2">
+        <div className="mt-14 bg-white shadow-md w-full p-2 md:w-3/4 mx-auto lg:w-1/2 ">
           {message.text && <Alert type={message.type}>{message.text}</Alert>}
           <p className="text-black uppercase font-black text-lg md:text-xl lg:text-2xl">
             Recuperar contraseña
@@ -74,18 +74,18 @@ function RecoveryPassword() {
           >
             Enviar email
           </button>
-          <div className="grid grid-cols-2 gap-5 lg:gap-52">
-            <p>¿Aún no tienes una cuenta?{' '}
-              <Link href='/register'>
-                <span className="font-bold text-indigo-600 cursor-pointer hover:underline">Registrate aquí</span>
-              </Link>
-            </p>
+          <div className="grid grid-cols-2 gap-5 lg:gap-52">            
             <p>
               ¿Ya tienes una cuenta?{" "}
               <Link href="/login">
                 <span className="font-bold text-indigo-600 hover:underline cursor-pointer">
                   Ingresa Aquí
                 </span>
+              </Link>
+            </p>
+            <p>¿Aún no tienes una cuenta?{' '}
+              <Link href='/register'>
+                <span className="font-bold text-indigo-600 cursor-pointer hover:underline">Registrate aquí</span>
               </Link>
             </p>
           </div>
