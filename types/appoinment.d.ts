@@ -17,7 +17,14 @@ export type CreateAppointment = Omit<Appointment, 'id' | 'price'>
 
 export type ChangesAppointment = Pick<Appointment, 'isCompleted'| 'prescription'| 'price'>
 
+export type UpdateAppointment = Pick<Appointment, 'date' | 'symptoms' | 'petId'>
+
 export interface CreateAppointmentResponse {
+  error: ErrorResponse,
+  body: Appointment
+}
+
+export interface UpdateAppointmentResponse {
   error: ErrorResponse,
   body: Appointment
 }

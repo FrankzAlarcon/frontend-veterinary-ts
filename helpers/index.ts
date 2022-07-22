@@ -12,8 +12,13 @@ export const priorityTraduction = (priority: 'HIGH' | 'MEDIUM' | 'LOW' | ''): st
 }
 
 export const formatDate = (date: string): string => {
-  const newDate = new Date(date).toISOString().split('.')[0].slice(0,-3)
-  return newDate
+  const dateFormatted = new Date(date);
+  const month = dateFormatted.getMonth() + 1;
+  const day = dateFormatted.getDate();
+  const hour = dateFormatted.getHours();
+  const minute = dateFormatted.getMinutes();
+  const dateString = `${dateFormatted.getFullYear()}-${month < 10 ? `0${month}`: month}-${day < 10 ? `0${day}`: day}T${hour < 10 ? `0${hour}`: hour}:${minute < 10 ? `0${minute}`: minute}`;
+  return dateString
 }
 
 export const formatStringToDate = (date: string) => {

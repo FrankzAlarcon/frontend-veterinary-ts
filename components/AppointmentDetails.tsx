@@ -1,9 +1,7 @@
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { formatMoney, formatStringToDate } from "../helpers"
-import useVeterinarian from "../hooks/useVeterinarian";
-import { updateAppointment } from "../services/appointment";
 import { AppointmentWithPet } from "../types/appoinment"
-import { User } from "../types/custom";
 import Alert from "./Alert";
 
 interface Props {
@@ -15,20 +13,32 @@ interface Props {
   price: number | string
   setPrice: (value: number | string) => void
   showCompleteForm: boolean
-  setShowCompleteForm: (value: boolean) => void
+  setShowCompleteForm: (value: boolean) => void  
 }
 
 export default function AppointmentDetails({
   appointment, showConfirmModal, prescription, setPrescription, price, setPrice, setSelectedAppointment, setShowCompleteForm, showCompleteForm
 }: Props) {
   const [alert, setAlert] = useState(false);
+  const [isSelected, setIsSelected] = useState(false);
+  const router = useRouter();
 
-  const handleShowCompleteForm = (value: boolean) => {
-    setShowCompleteForm(value);
+  const handleShowCompleteForm = () => {    
+    setShowCompleteForm(true);
+    setAlert(false);
+    setPrice('');
+    setPrescription('');
+    setSelectedAppointment(appointment);
+    setIsSelected(true);
+  }
+
+  const handleHideCompleteForm = () => {
+    setShowCompleteForm(false);
     setAlert(false);
     setPrice('');
     setPrescription('');
     setSelectedAppointment({});
+    setIsSelected(false);
   }
 
   const handleComplete = async () => {
@@ -36,7 +46,6 @@ export default function AppointmentDetails({
       setAlert(true);
       return setTimeout(() => setAlert(false), 2500);
     }
-    setSelectedAppointment(appointment);
     showConfirmModal(true);
   }  
 
@@ -63,19 +72,19 @@ export default function AppointmentDetails({
             <div className="flex gap-5 justify-around md:w-3/12 md:flex-col md:items-center">
               <button
                 className="submit-button bg-lime-500 hover:bg-lime-400 text-white new-width shadow-sm rounded-md md:w-full"
-                onClick={showCompleteForm ? handleComplete : () => handleShowCompleteForm(true)}
-              >{showCompleteForm ? 'Guardar':'Completar'}</button>
+                onClick={showCompleteForm && isSelected ? handleComplete : handleShowCompleteForm}
+              >{showCompleteForm && isSelected ? 'Guardar':'Completar'}</button>
               <button
-                className={`submit-button text-white new-width shadow-sm rounded-md md:w-full ${showCompleteForm ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700'}`}
-                onClick={showCompleteForm ? () => handleShowCompleteForm(false) : () => {}}
-              >{showCompleteForm ? 'Cancelar': 'Editar'}</button>
+                className={`submit-button text-white new-width shadow-sm rounded-md md:w-full ${showCompleteForm && isSelected ? 'bg-red-600 hover:bg-red-700' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+                onClick={showCompleteForm && isSelected ? handleHideCompleteForm : () => {router.push(`${appointment.customerId}/edit-appointment/${appointment.id}`)}}
+              >{showCompleteForm && isSelected ? 'Cancelar': 'Editar'}</button>
             </div>
           )
         }
       </div>
       <div>
         {
-          showCompleteForm && (
+          showCompleteForm && isSelected &&(
             <div className="flex flex-col justify-center items-center">
               <div className="w-full md:w-3/5 lg:w-1/2">
                 <form className="rounded px-2 pt-6 pb-2 mb-4">

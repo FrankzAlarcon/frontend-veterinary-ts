@@ -1,5 +1,5 @@
 import { envVariables } from ".";
-import { CreateAppointmentResponse, CompleteAppointment, CompleteAppointmentResponse, CreateAppointment, ChangesAppointment, DeleteAppointmentsResponse } from "../types/appoinment";
+import { CreateAppointmentResponse, CompleteAppointment, CompleteAppointmentResponse, CreateAppointment, ChangesAppointment, DeleteAppointmentsResponse, Appointment, UpdateAppointment, UpdateAppointmentResponse } from "../types/appoinment";
 import { NewCustomer } from "../types/customer";
 import { createCustomer } from "./customer";
 import { createPet } from "./pet";
@@ -64,7 +64,28 @@ export const createEntireAppointment = async (veterinarianId: number, token:stri
   return body;
 }
 
-export const updateAppointment = async (appointmentId: number, changes: ChangesAppointment, token: string) => {
+export const completeUpdateAppointment = async (appointmentId: number,  values: UpdateAppointment, token: string,) => {
+  const appointmentData: UpdateAppointment = {
+    ...values,
+    date: new Date(values.date).toISOString()
+  }
+  const rawData = await fetch(`${envVariables.apiUrl}/appointments/${appointmentId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(appointmentData),
+    headers: {
+      'Content-Type': 'application/json',
+      authorization: `Bearer ${token}`
+    }
+  });
+  const {error, body}: UpdateAppointmentResponse = await rawData.json();
+  if(error) {
+    throw new Error(error.message);
+  }
+  return body;
+
+}
+
+export const updateAppointment = async (appointmentId: number, changes: ChangesAppointment, token: string) => {  
   const rawData = await fetch(`${envVariables.apiUrl}/appointments/${appointmentId}`, {
     method: 'PATCH',
     body: JSON.stringify(changes),

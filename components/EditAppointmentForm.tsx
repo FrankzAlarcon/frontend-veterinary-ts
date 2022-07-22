@@ -1,30 +1,93 @@
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, FormikHelpers } from "formik";
+import { ChangeEvent, useState } from "react";
 import { formatDate } from "../helpers";
+import useVeterinarian from "../hooks/useVeterinarian";
 import { newAppointmentSchema } from "../schemas";
-import { CompleteAppointment } from "../types/appoinment";
+import { completeUpdateAppointment } from "../services/appointment";
+import { createPet } from "../services/pet";
+import { CompleteAppointment, UpdateAppointment } from "../types/appoinment";
+import { User } from "../types/custom";
+import { NewCustomer } from "../types/customer";
 import Alert from "./Alert";
 
 interface Props {
   props: {
     appointment: CompleteAppointment
+    handleModal: (value: boolean) => void
   }
 }
 
-export default function EditAppointmentForm({appointment}: Props['props']) {
-  const {customer, pet} = appointment;
+export default function EditAppointmentForm({appointment, handleModal}: Props['props']) {
+  const [showNewPetForm, setShowNewPetForm] = useState(false);
+  const [petId, setPetId] = useState(appointment.pet.id);
+  const [petName, setPetName] = useState(appointment.pet.name);
+  const [animalType, setAnimalType] = useState(appointment.pet.animalType);
+  const {veterinarian} = useVeterinarian();
+  const {customer} = appointment;
+
+  const handleShowNewPetForm = () => {
+    setShowNewPetForm(true);
+    setPetName('');
+    setAnimalType('');
+  }
+
+  const handleHideNewPetForm = () => {
+    setShowNewPetForm(false);
+    const pet = customer.pets.find(pet => pet.id === petId);
+    if(pet) {
+      setPetName(pet.name);
+      setAnimalType(pet.animalType);
+    }
+  }
+
+  const handleSelect = ({target}: ChangeEvent<HTMLSelectElement>) => {
+    const pet = customer.pets.find(pet => pet.id === Number(target.value));
+    if(pet) {
+      setPetId(pet.id);
+      if(!showNewPetForm) {
+        setPetName(pet.name);
+        setAnimalType(pet.animalType);
+      }
+    }
+  }
+
+  const handleSubmit = async (values: NewCustomer, {resetForm}: FormikHelpers<NewCustomer>) => {
+    try {
+      const {petName, animalType} = values;
+      const vet = (veterinarian as User);
+      let pet;
+      if(showNewPetForm) {
+        pet = await createPet(vet.token, customer.id, petName, animalType) ;
+      }
+      const {date, symptoms} = values;
+      const newAppointmentData: UpdateAppointment = {
+        date,
+        symptoms,                
+        petId: pet ? pet.id : petId,        
+      }
+      await completeUpdateAppointment(appointment.id, newAppointmentData, vet.token);
+      handleModal(true);
+      resetForm();  
+    } catch (error) {
+      
+    }
+  }
+  
+
   return (
     <div className="w-full bg-white p-3 shadow-md">
       <Formik
         initialValues={{
           name: customer.name ?? '',
           email: customer.email ?? '',          
-          petName: pet.name ?? '',
-          animalType: pet.animalType ?? '',
+          petName: petName ?? '',
+          animalType:animalType ?? '',
           date: formatDate(appointment.date) ?? '',
           symptoms: appointment.symptoms ?? ''
         }}
-        onSubmit={() => {}}
+        onSubmit={handleSubmit}
         validationSchema={newAppointmentSchema}
+        enableReinitialize
       >
         {
           ({errors, touched,values}) => (
@@ -39,7 +102,7 @@ export default function EditAppointmentForm({appointment}: Props['props']) {
                     <Field
                       disabled
                       type="text"
-                      className="w-full p-2 border-2 border-gray-700 rounded-md"
+                      className="w-full p-2 border-2 border-gray-700 rounded-md disabled:bg-slate-100"
                       placeholder="Nombre del cliente"
                       value={values.name}
                       name="name"
@@ -52,7 +115,7 @@ export default function EditAppointmentForm({appointment}: Props['props']) {
                     <Field
                       disabled
                       type="email"
-                      className="w-full p-2 border-2 border-gray-700 rounded-md"
+                      className="w-full p-2 border-2 border-gray-700 rounded-md disabled:bg-slate-100"
                       placeholder="Email del cliente"
                       value={values.email}
                       name="email"
@@ -67,7 +130,7 @@ export default function EditAppointmentForm({appointment}: Props['props']) {
                 Datos de la mascota
               </h2>
               <label htmlFor="pets">
-                <Field component='select' name="pets" id="pets" className='w-full p-2 border-2 border-gray-700 rounded-md'>
+                <Field component='select' name="pets" onChange={handleSelect} value={petId} id="pets" className='w-full p-2 border-2 border-gray-700 rounded-md'>
                   <option value="" disabled>--Seleccionar Mascota--</option>
                   {customer.pets.map(pet => (
                     <option key={pet.id} value={pet.id}>{pet.name}</option>
@@ -79,9 +142,10 @@ export default function EditAppointmentForm({appointment}: Props['props']) {
                   <p className="text-gray-900 font-bold uppercase mb-1">Nombre de la mascota</p>
                   <Field
                     type="text"
-                    className="w-full p-2 border-2 border-gray-700 rounded-md"
+                    className="w-full p-2 border-2 border-gray-700 rounded-md disabled:bg-slate-100"
                     placeholder="Nombre de la mascota"
                     value={values.petName}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setPetName(e.target.value)}
                     name="petName"
                     id="petName"
                   />
@@ -91,14 +155,30 @@ export default function EditAppointmentForm({appointment}: Props['props']) {
                   <p className="text-gray-900 font-bold uppercase mb-1">Tipo de animal</p>
                   <Field
                     type="text"
-                    className="w-full p-2 border-2 border-gray-700 rounded-md"
+                    className="w-full p-2 border-2 border-gray-700 rounded-md disabled:bg-slate-100"
                     placeholder="Tipo de animal"
                     value={values.animalType}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setAnimalType(e.target.value)}
                     name="animalType"
                     id="animalType"
                   />
                   {errors.animalType && touched.animalType && <Alert type="error">{errors.animalType}</Alert>}
                 </label>
+                {
+                  showNewPetForm ? (
+                    <button
+                      type="button"
+                      className="submit-button bg-red-600 hover:bg-red-700 text-white"
+                      onClick={handleHideNewPetForm}
+                    >Cancelar</button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="submit-button bg-indigo-600 hover:bg-indigo-700 text-white"
+                      onClick={handleShowNewPetForm}
+                    >Nueva Mascota</button>
+                  )
+                }
               </div>
             </div>
             <div className="mb-2">
@@ -134,7 +214,7 @@ export default function EditAppointmentForm({appointment}: Props['props']) {
             </div>
             <input 
               type="submit"
-              value="Agregar cliente"
+              value="Guardar Cambios"
               className="submit-button bg-indigo-600 hover:bg-indigo-700 text-white block"
             />
             </Form>

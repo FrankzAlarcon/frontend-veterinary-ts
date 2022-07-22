@@ -1,8 +1,9 @@
 import { Formik, Form, Field, FormikHelpers } from "formik";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import useVeterinarian from "../hooks/useVeterinarian";
 import { newAppointmentSchema } from "../schemas";
 import { createAppointment } from "../services/appointment";
+import { createPet } from "../services/pet";
 import { CreateAppointment } from "../types/appoinment";
 import { User } from "../types/custom";
 import { NewCustomer } from "../types/customer";
@@ -14,33 +15,63 @@ interface Props {
 
 export default function ExistingCustomerForm({handleModal}: Props) {
   const [petId, setPetId] = useState(0);
-  const [petName, setPetName] = useState('');
-  const [animalType, setAnimalType] = useState('');
+  const [appointmentData, setAppointmentData] = useState<NewCustomer>({name: "", email: "", petName: "", animalType: "", date: "", symptoms: ""});
+  const [showNewPetForm, setShowNewPetForm] = useState(false);
   const {customer, veterinarian} = useVeterinarian();
+  
+  useEffect(() => {
+    if(customer.id !== 0) {
+      setPetId(customer.pets[0].id);
+      const {name, email} = customer;
+      const { name: petName, animalType} = customer.pets[0];
+      setAppointmentData({...appointmentData, name, email, petName, animalType});
+    }
+  }, [customer]);
 
   const handleSelect = ({target}: ChangeEvent<HTMLSelectElement>) => {
     const pet = customer.pets.find(pet => pet.id === Number(target.value));
     if(pet) {
       setPetId(pet.id);
-      setPetName(pet.name);
-      setAnimalType(pet.animalType);
+      if(!showNewPetForm) {
+        setAppointmentData({...appointmentData, petName: pet.name, animalType: pet.animalType});
+      }
     }
   }
 
-  const handleSubmit = async (values: NewCustomer, {}: FormikHelpers<NewCustomer>) => {
+  const handleShowNewPetForm = () => {
+    setShowNewPetForm(true);
+    setAppointmentData({...appointmentData, petName: '', animalType: ''});
+  }
+
+  const handleHideNewPetForm = () => {
+    setShowNewPetForm(false);
+    const pet = customer.pets.find(pet => pet.id === petId);
+    if(pet) {      
+      setAppointmentData({...appointmentData, petName: pet.name, animalType: pet.animalType});      
+    }
+  }
+
+  const handleSubmit = async (values: NewCustomer, {resetForm}: FormikHelpers<NewCustomer>) => {
     try {
+      const {petName, animalType} = values;
+      const vet = (veterinarian as User);
+      let pet;
+      if(showNewPetForm) {
+        pet = await createPet(vet.token, customer.id, petName, animalType) ;
+      }      
       const {date, symptoms} = values;
-      const appointmentData: CreateAppointment = {
+      const appointment: CreateAppointment = {
         date,
         symptoms,
         isCompleted: false,
         prescription: '',
         customerId: customer.id,
-        veterinarianId: (veterinarian as User).id,
-        petId
+        veterinarianId: vet.id,
+        petId: pet?.id ?? petId
       }
-      await createAppointment(appointmentData, (veterinarian as User).token);
+      await createAppointment(appointment, vet.token);
       handleModal(true);
+      resetForm();
     } catch (error) {
       
     }
@@ -50,12 +81,12 @@ export default function ExistingCustomerForm({handleModal}: Props) {
     <div className="w-full bg-white p-3 shadow-md">
       <Formik
         initialValues={{
-          name: customer.name ?? '',
-          email: customer.email ?? '',          
-          petName:  petName,
-          animalType:  animalType,
-          date:  '',
-          symptoms: ''
+          name: appointmentData.name ?? '',
+          email: appointmentData.email ?? '',          
+          petName:  appointmentData.petName ?? '',
+          animalType:  appointmentData.animalType ?? '',
+          date:  appointmentData.date ?? '',
+          symptoms: appointmentData.symptoms ?? ''
         }}
         onSubmit={handleSubmit}
         enableReinitialize
@@ -74,9 +105,9 @@ export default function ExistingCustomerForm({handleModal}: Props) {
                     <Field
                       disabled
                       type="text"
-                      className="w-full p-2 border-2 border-gray-700 rounded-md"
+                      className="w-full p-2 border-2 border-gray-700 rounded-md disabled:bg-slate-100"
                       placeholder="Nombre del cliente"
-                      value={values.name}
+                      value={values.name}                      
                       name="name"
                       id="name"
                     />
@@ -87,7 +118,7 @@ export default function ExistingCustomerForm({handleModal}: Props) {
                     <Field
                       disabled
                       type="email"
-                      className="w-full p-2 border-2 border-gray-700 rounded-md"
+                      className="w-full p-2 border-2 border-gray-700 rounded-md disabled:bg-slate-100"
                       placeholder="Email del cliente"
                       value={values.email}
                       name="email"
@@ -102,7 +133,7 @@ export default function ExistingCustomerForm({handleModal}: Props) {
                 Datos de la mascota
               </h2>
               <label htmlFor="pets">
-                <Field onChange={handleSelect} as="select" defaultValue=""  name="pets" id="pets" className='w-full p-2 border-2 border-gray-700 rounded-md'>
+                <Field onChange={handleSelect} as="select" defaultValue={customer.pets[0]?.id}  name="pets" id="pets" className='w-full p-2 border-2 border-gray-700 rounded-md'>
                   <option value="" disabled>--Seleccionar Mascota--</option>
                   {customer.pets.map(pet => (
                     <option key={pet.id} value={pet.id}>{pet.name}</option>
@@ -114,11 +145,13 @@ export default function ExistingCustomerForm({handleModal}: Props) {
                   <p className="text-gray-900 font-bold uppercase mb-1">Nombre de la mascota</p>
                   <Field
                     type="text"
-                    className="w-full p-2 border-2 border-gray-700 rounded-md"
+                    className="w-full p-2 border-2 border-gray-700 rounded-md disabled:bg-slate-100"
                     placeholder="Nombre de la mascota"
                     value={values.petName}
                     name="petName"
                     id="petName"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setAppointmentData({...appointmentData, petName: e.target.value})}
+                    disabled={!showNewPetForm}
                   />
                   {errors.petName && touched.petName && <Alert type="error">{errors.petName}</Alert>}
                 </label>
@@ -126,16 +159,32 @@ export default function ExistingCustomerForm({handleModal}: Props) {
                   <p className="text-gray-900 font-bold uppercase mb-1">Tipo de animal</p>
                   <Field
                     type="text"
-                    className="w-full p-2 border-2 border-gray-700 rounded-md"
+                    className="w-full p-2 border-2 border-gray-700 rounded-md disabled:bg-slate-100"
                     placeholder="Tipo de animal"
                     value={values.animalType}
                     name="animalType"
                     id="animalType"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setAppointmentData({...appointmentData, animalType: e.target.value})}
+                    disabled={!showNewPetForm}
                   />
                   {errors.animalType && touched.animalType && <Alert type="error">{errors.animalType}</Alert>}
                 </label>
-                <button className="submit-button bg-indigo-600 hover:bg-indigo-700 text-white">Nueva Mascota</button>
               </div>
+              {
+                showNewPetForm ? (
+                  <button
+                    type="button"
+                    className="submit-button bg-red-600 hover:bg-red-700 text-white"
+                    onClick={handleHideNewPetForm}
+                  >Cancelar</button>
+                ) : (
+                  <button
+                    type="button"
+                    className="submit-button bg-indigo-600 hover:bg-indigo-700 text-white"
+                    onClick={handleShowNewPetForm}
+                  >Nueva Mascota</button>
+                )
+              }
             </div>
             <div className="mb-2">
               <h2 className="text-center font-black uppercase text-xl lg:mb-2">
@@ -148,6 +197,7 @@ export default function ExistingCustomerForm({handleModal}: Props) {
                     type="datetime-local"
                     className="w-full p-2 border-2 border-gray-700 rounded-md"
                     value={values.date}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setAppointmentData({...appointmentData, date: e.target.value})}
                     name="date"
                     id="date"
                   />
@@ -163,6 +213,7 @@ export default function ExistingCustomerForm({handleModal}: Props) {
                     value={values.symptoms}
                     name="symptoms"
                     id="symptoms"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setAppointmentData({...appointmentData, symptoms: e.target.value})}
                   />
                   {errors.symptoms && touched.symptoms && <Alert type="error">{errors.symptoms}</Alert>}
                 </label>
