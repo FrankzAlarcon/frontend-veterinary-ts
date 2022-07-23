@@ -84,7 +84,6 @@ const Home: NextPage<Props['props']> = ({customersPreview}) => {
 export async function getServerSideProps({req}: GetServerSidePropsContext) {
   try {
     const {token, veterinarianId} = req.cookies;
-    console.log(token, veterinarianId, !token || ! veterinarianId);
     if(!token || ! veterinarianId) {
       return {
         notFound: true
@@ -97,9 +96,7 @@ export async function getServerSideProps({req}: GetServerSidePropsContext) {
       }
     }
   } catch (error) { 
-    console.log('ha ocurrido un errr');
     return {
-
       redirect: {
         destination: '/login',
         permanent: false
