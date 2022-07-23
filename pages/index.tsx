@@ -65,7 +65,8 @@ const Home: NextPage<Props['props']> = ({customersPreview}) => {
         <Input id='searcher' placeholder='Escribe el nombre de un cliente' value={input} setValue={setInput}/>
         <div>
           {
-            filteredCustomerInfo.map((customer) => <CustomerCard key={customer.id} customer={customer} showModalDelete={setShowModal} handleSelectedCustomer={setSelectedCustomer}/>)
+            filteredCustomerInfo.length !== 0 ? filteredCustomerInfo.map((customer) => <CustomerCard key={customer.id} customer={customer} showModalDelete={setShowModal} handleSelectedCustomer={setSelectedCustomer}/>)
+            : <p className='text-gray-600 text-center font-black text-xl mt-6 md:text-3xl lg:text-4xl'>No hay pacientes registrados</p>
           }
         </div>
         <ModalDelete
@@ -95,7 +96,6 @@ export async function getServerSideProps({req}: GetServerSidePropsContext) {
       }
     }
   } catch (error) {
-    console.log(error)
     return {
       notFound: true
     }

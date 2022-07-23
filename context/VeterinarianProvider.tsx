@@ -104,6 +104,8 @@ export default function VeterinarianProvider({children}:ContextProps['props']) {
     setTasks([]);
     setSelectedTask({id: 0, priority: 'MEDIUM', text: ''});
     setAppointments([]);
+    document.cookie = document.cookie.replace(/(?:(?:^|.*;\s*)veterinarianId\s*\=\s*([^;]*).*$)|^.*$/, '');
+    document.cookie = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, '');
     router.push('/login');    
   }, [router, setVeterinarian]);
 

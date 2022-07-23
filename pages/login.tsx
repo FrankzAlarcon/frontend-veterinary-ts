@@ -5,17 +5,17 @@ import CustomHead from '../components/CustomHead';
 import LoginForm from '../components/LoginForm';
 import Wave from '../components/Wave';
 import useVeterinarian from '../hooks/useVeterinarian';
-import { User } from '../types/custom';
 
 const Home: NextPage = () => {
   const {veterinarian} = useVeterinarian();
   const router = useRouter();
   useEffect(() => {
     if(Object.keys(veterinarian).length !== 0) {
-      router.push('/');
-      document.cookie = `token=${(veterinarian as User).token}`;
-      document.cookie = `veterinarianId=${(veterinarian as User).id}`;
+      router.push('/');      
+      return;
     }
+    document.cookie = `token='';`;
+    document.cookie = `veterinarianId='';`;
   }, [router, veterinarian]);
   return (
     <>

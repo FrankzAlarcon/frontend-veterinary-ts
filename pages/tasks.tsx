@@ -52,7 +52,7 @@ export default function Tasks() {
       }
     }
     getTasks();
-  }, [saveTasks, veterinarian, tasks.length]);
+  }, [veterinarian]);
 
   const handleShowModal = (newValue:HandleModal) => { 
     setOpenModal({...newValue, value: newValue.value});    
@@ -85,8 +85,9 @@ export default function Tasks() {
           </label>
         </div>
         {loading && <Spinner type='purple'/>}
-        {!loading && filteredTasksByPriority.length === 0 && <Alert>{`No existen tareas con prioridad: ${priorityTraduction(priorityFilter as Priority)}`}</Alert>}
-        {!loading && filteredTasksByText.length === 0 && filteredTasksByPriority.length !== 0 && (<Alert>{`No existen resultados para: ${input}`}</Alert>)}
+        {!loading && tasks.length === 0 && <Alert type='successful'>No hay tareas para mostrar</Alert>}
+        {!loading && tasks.length !== 0 && filteredTasksByPriority.length === 0 && <Alert>{`No existen tareas con prioridad: ${priorityTraduction(priorityFilter as Priority)}`}</Alert>}
+        {!loading && tasks.length !== 0 && filteredTasksByText.length === 0 && filteredTasksByPriority.length !== 0 && (<Alert>{`No existen resultados para: ${input}`}</Alert>)}
         <div className='lg:grid lg:grid-cols-2 gap-10'>          
           {filteredTasksByText.map((task) => (<Task key={task.id} task={task} handleShowModal={handleShowModal}/>))}
         </div>

@@ -19,6 +19,8 @@ function LoginForm() {
     try {
       setLoading(true);
       const veterinarian = await authVeterinarian(values);
+      document.cookie = `token=${veterinarian.token};path=/`;
+      document.cookie = `veterinarianId=${veterinarian.id};path=/`;
       setVeterinarian(veterinarian);
       router.push('/')
       setError('');
