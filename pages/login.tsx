@@ -16,7 +16,7 @@ const Home: NextPage = () => {
     }
     document.cookie = `token='';`;
     document.cookie = `veterinarianId='';`;
-  }, [router, veterinarian]);
+  }, [veterinarian]);
   return (
     <>
       <CustomHead title='Login' description='Inicia sesión con tu cuenta para que puedas administrar tu veterinaria'/>
