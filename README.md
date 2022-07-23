@@ -1,3 +1,30 @@
+# Veterinary App
+Web App to manage a Veterinary. 
+
+You could add, edit and delete customers. Also, you will be able to create appointment with your customers and their pets and add tasks/TODOs to remember what do you have to do.
+
+### Technologies used to create it
+----
+> - PERN Stack (PostgreSQL, Express, React, Nodejs).
+> - Nextjs Framework
+> - Typescript
+> - TailwindCSS.
+> - Formik.
+> - Eslint was used as a linter.
+---
+#### Visit this project
+`<link>` : [Veterinary App](https://frontend-veterinary-lqe6kfvoh-frankzalarcon.vercel.app/ "Veterinary App")
+#### Clone this project
+Run `git clone [URL]` to clone this repo.
+
+Run  `cd veterinary app`, then  `npm install`.
+
+Finally,  `npm run dev` to init the development environmet.
+
+
+### End
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
