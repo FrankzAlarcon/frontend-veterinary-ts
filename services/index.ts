@@ -35,7 +35,13 @@ export const registerVeterinarian = async (data: Omit<RegisterValues, 'repeatPas
 }
 
 export const confirmAccount = async (id: string) => {
-  const rawData =  await fetch(`${envVariables.apiUrl}/auth/confirm-account/${id}`);
+  const rawData =  await fetch(`${envVariables.apiUrl}/auth/confirm-account/${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Origin': envVariables.apiUrl ?? ''
+    }
+  });
   const {error, body}: ConfirmAccountResponse = await rawData.json();
   if(error) {    
     throw new Error(error.message);
