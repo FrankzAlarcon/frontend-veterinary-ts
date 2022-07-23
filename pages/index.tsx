@@ -95,9 +95,12 @@ export async function getServerSideProps({req}: GetServerSidePropsContext) {
         customersPreview
       }
     }
-  } catch (error) {
+  } catch (error) {    
     return {
-      notFound: true
+      redirect: {
+        destination: '/login',
+        permanent: false
+      }        
     }
   }
 }
