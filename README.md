@@ -3,7 +3,7 @@ Web App to manage a Veterinary.
 
 You could add, edit and delete customers. Also, you will be able to create appointment with your customers and their pets and add tasks/TODOs to remember what do you have to do.
 
-### Technologies used to create it
+### Technologies
 ----
 > - PERN Stack (PostgreSQL, Express, React, Nodejs).
 > - Nextjs Framework
