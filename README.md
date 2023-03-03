@@ -1,5 +1,5 @@
-# Veterinary App
-Web App to manage a Veterinary. 
+# Veterinary App (Currently not Online on production)
+Web App to manage a Veterinary. (Currently, the backend is not online because herokku became paid)
 
 You could add, edit and delete customers. Also, you will be able to create appointment with your customers and their pets and add tasks/TODOs to remember what do you have to do.
 
